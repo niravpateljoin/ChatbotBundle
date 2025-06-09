@@ -19,7 +19,18 @@ A Symfony bundle that provides a menu-based chatbot widget with category managem
 
 ## Installation
 
-### Step 1: Install the Bundle
+### Step 1: Add Configuration
+
+Create the file `config/packages/chatbot.yaml`:
+Create the file config/packages/chatbot.yaml and set the user_question_entity parameter to the fully qualified namespace of your user question entity class.
+
+```yaml
+chatbot:
+    role: ROLE_CHATBOT_ADMIN
+    user_question_entity: App\Entity\UserQuestion
+```
+
+### Step 2: Install the Bundle
 
 Install the chatbot bundle using Composer:
 
@@ -27,7 +38,7 @@ Install the chatbot bundle using Composer:
 composer require patel/chatbot-bundle
 ```
 
-### Step 2: Register the Bundle
+### Step 3: Register the Bundle
 
 Add the bundle to your `config/bundles.php` file:
 
@@ -37,7 +48,7 @@ return [
     Chatbot\ChatbotBundle::class => ['all' => true],
 ];
 ```
-### Step 3: User-Submitted Questions
+### Step 4: User-Submitted Questions
 
 Users can submit their own questions through the chatbot. Admins can respond and choose to publish them in the FAQ. Users receive email notifications when their question is answered.
 
@@ -129,7 +140,7 @@ Set the `FROM_EMAIL` in your `.env`:
 FROM_EMAIL="your@email.com"
 ```
 
-### Step 4: Install Assets
+### Step 5: Install Assets
 
 ```bash
 php bin/console assets:install --symlink
@@ -137,7 +148,7 @@ php bin/console assets:install --symlink
 
 This will publish necessary asset files to the `public/bundles/` directory.
 
-### Step 5: Create and Run Migrations
+### Step 6: Create and Run Migrations
 
 Generate and execute the database migrations:
 
@@ -146,7 +157,7 @@ php bin/console make:migration
 php bin/console doctrine:migrations:migrate
 ```
 
-### Step 6: Include the Chatbot Widget
+### Step 7: Include the Chatbot Widget
 
 Include the widget in your base template (`templates/base.html.twig`):
 
@@ -157,7 +168,7 @@ Include the widget in your base template (`templates/base.html.twig`):
 </body>
 ```
 
-### Step 7: Add Routes
+### Step 8: Add Routes
 
 Add the following to `config/routes.yaml`:
 
@@ -166,21 +177,10 @@ chatbot_bundle:
   resource: '@ChatbotBundle/Resources/config/routes.yaml'
 ```
 
-### Step 8: Add in your services.yaml
+### Step 9: Add in your services.yaml
 
 ```yaml
 Chatbot\Repository\UserQuestionRepositoryInterface: '@App\Repository\UserQuestionRepository'
-```
-
-### Step 9: Add Configuration
-
-Create the file `config/packages/chatbot.yaml`:
-Create the file config/packages/chatbot.yaml and set the user_question_entity parameter to the fully qualified namespace of your user question entity class.
-
-```yaml
-chatbot:
-    role: ROLE_CHATBOT_ADMIN
-    user_question_entity: App\Entity\UserQuestion
 ```
 ---
 
