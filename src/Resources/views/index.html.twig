@@ -1,0 +1,30 @@
+{% extends '@Chatbot/base.html.twig' %}
+
+{% block title %}Chatbot{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('bundles/chatbot/css/category.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+    <div class="container-wide">
+        <div class="header header-wide">
+            <div class="header-content">
+                <div class="header-left">
+                    <h1><i class="fas fa-robot"></i> Chatbot</h1>
+                    <p>Manage and organize your chatbot categories, faq's and user's questions with ease</p>
+                    <a href="{{ path('chatbot_category_index') }}" class="add-btn">
+                        Category
+                    </a>
+                    <a href="{{ path('chatbot_faq_index') }}" class="add-btn">
+                        FAQ'S
+                    </a>
+                    <a href="{{ path('chatbot_user_questions_index') }}" class="add-btn">
+                        User Queries
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

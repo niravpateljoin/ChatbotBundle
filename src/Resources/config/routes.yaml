@@ -1,0 +1,4 @@
+chatbot_bundle:
+  resource: '@ChatbotBundle/Controller/'
+  type: attribute
+  prefix: /chatbot

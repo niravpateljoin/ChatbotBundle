@@ -1,0 +1,131 @@
+{% extends '@Chatbot/base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('bundles/chatbot/css/faq.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <!-- Breadcrumb -->
+        <div class="breadcrumb">
+            <a href="{{ path('chatbot_faq_index') }}">
+                <i class="fas fa-home"></i> FAQs
+            </a>
+            <span>/</span>
+            <span>{{ title }}</span>
+        </div>
+
+        <!-- Header -->
+        <div class="header">
+            <h1>
+                <i class="fas fa-question-circle"></i>
+                {{ title }}
+            </h1>
+            <p>{{ title|lower == 'add faq' ? 'Create a new frequently asked question' : 'Update FAQ information' }}</p>
+        </div>
+
+        <!-- Success/Error Messages -->
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle"></i>
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-circle"></i>
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        <!-- Form Container -->
+        <div class="form-container">
+            {{ form_start(form) }}
+
+            <!-- Question Field -->
+            <div class="form-group">
+                <div class="form-floating">
+                    {{ form_widget(form.question, {
+                        'attr': {
+                            'class': 'form-control',
+                            'placeholder': ' ',
+                            'required': 'required'
+                        }
+                    }) }}
+                    {{ form_label(form.question, 'Question', {
+                        'label_attr': {'class': 'form-label'}
+                    }) }}
+                    <span class="required">*</span>
+                </div>
+                <div class="form-help">
+                    <i class="fas fa-info-circle"></i>
+                    Enter the frequently asked question
+                </div>
+                {{ form_errors(form.question) }}
+            </div>
+
+            <!-- Answer Field -->
+            <div class="form-group">
+                <div class="form-floating">
+                    {{ form_widget(form.answer, {
+                        'attr': {
+                            'class': 'form-control',
+                            'placeholder': ' ',
+                            'required': 'required'
+                        }
+                    }) }}
+                    {{ form_label(form.answer, 'Answer', {
+                        'label_attr': {'class': 'form-label'}
+                    }) }}
+                    <span class="required">*</span>
+                </div>
+                <div class="form-help">
+                    <i class="fas fa-info-circle"></i>
+                    Provide a comprehensive answer to the question
+                </div>
+                {{ form_errors(form.answer) }}
+            </div>
+
+            <!-- Category Field -->
+            <div class="form-group">
+                <label class="form-label">
+                    <i class="fas fa-tag"></i> Category <span class="required">*</span>
+                </label>
+                {{ form_widget(form.category, {
+                    'attr': {
+                        'class': 'form-control',
+                        'required': 'required'
+                    }
+                }) }}
+                <div class="form-help">
+                    <i class="fas fa-info-circle"></i>
+                    Select the category this FAQ belongs to
+                </div>
+                {{ form_errors(form.category) }}
+            </div>
+
+            <!-- Form Actions -->
+            <div class="form-actions">
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save"></i>
+                        Save FAQ
+                    </button>
+                    <a href="{{ path('chatbot_faq_index') }}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i>
+                        Back to List
+                    </a>
+                </div>
+            </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset('bundles/chatbot/js/faq.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,255 @@
+{% extends '@Chatbot/base.html.twig' %}
+
+{% block title %}User Questions{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('bundles/chatbot/css/faq.css') }}" rel="stylesheet">
+    <style>
+        .page-header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        .page-header p {
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+            font-size: 16px;
+        }
+
+        .questions-table {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .questions-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .questions-table th {
+            background: #f8fafc;
+            color: #374151;
+            font-weight: 600;
+            padding: 20px;
+            text-align: left;
+            border-bottom: 2px solid #e5e7eb;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .questions-table td {
+            padding: 20px;
+            border-bottom: 1px solid #f3f4f6;
+            vertical-align: top;
+        }
+
+        .questions-table tr:hover {
+            background: #fafbfc;
+        }
+
+        .question-text {
+            max-width: 400px;
+            word-wrap: break-word;
+            line-height: 1.5;
+            color: #374151;
+        }
+
+        .question-id {
+            font-weight: 600;
+            color: #667eea;
+            font-size: 16px;
+        }
+
+        .question-date {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-answer {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+
+        .btn-answer:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+        .btn-delete {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+        }
+
+        .btn-delete:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+
+        .delete-form {
+            display: inline-block;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6b7280;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .empty-state h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #374151;
+        }
+
+        .stats-number {
+            font-size: 20px;
+            font-weight: 700;
+            color: #667eea;
+            margin: 10px 0 10px 0;
+        }
+
+        @media (max-width: 768px) {
+
+            .questions-table {
+                overflow-x: auto;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="header index-header">
+        <div class="header-content">
+            <div class="header-left">
+                <h1>User Queries</h1>
+                <p>Manage questions submitted by users through the chatbot</p>
+                {% if questions|length > 0 %}
+                    <h6 class="stats-number">{{ questions|length }} Total Questions Pending</h6 class="stats-number">
+                {% endif %}
+                <a href="{{ path('chatbot') }}" class="add-btn">Back</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-container">
+        {% if questions|length > 0 %}
+        <table class="table">
+            <thead>
+            <tr>
+                <th><i class="fas fa-hashtag"></i> ID</th>
+                <th> Question</th>
+                <th> User</th>
+                <th> Created At</th>
+                <th> Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for question in questions %}
+                <tr>
+                    <td><span class="faq-id">{{ question.id }}</span></td>
+                    <td><span class="faq-question">{{ question.questionText }}</span>
+                    <td><span class="faq-answer">{{ question.user.firstname|default('Anonymous') }}</span></td>
+                    <td>{{ question.createdAt|date('M d, Y H:i') }}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <a href="{{ path('chatbot_faq_new', { question: question.questionText, userQuestionId: question.id }) }}"
+                               class="btn btn-answer">
+                                ✏️ Answer
+                            </a>
+
+                            <form method="post"
+                                  action="{{ path('chatbot_user_question_delete', {id: question.id}) }}"
+                                  class="delete-form"
+                                  onsubmit="return confirm('Are you sure you want to delete this question?');">
+                                <input type="hidden" name="token" value="{{ csrf_token('delete-item') }}">
+                                <button type="submit" class="btn btn-delete">
+                                    🗑️ Delete
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-state">
+                <i class="fas fa-question-circle"></i>
+                <h3>No FAQs Found</h3>
+                <p>Start by creating your first FAQ entry</p>
+                <a href="{{ path('chatbot_faq_new') }}" class="add-btn">
+                    <i class="fas fa-plus"></i>
+                    Add First FAQ
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success" style="position: fixed; top: 20px; right: 20px; z-index: 1000; background: #10b981; color: white; padding: 15px 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+            ✅ {{ message }}
+        </div>
+    {% endfor %}
+
+    {% for message in app.flashes('error') %}
+        <div class="alert alert-error" style="position: fixed; top: 20px; right: 20px; z-index: 1000; background: #ef4444; color: white; padding: 15px 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+            ❌ {{ message }}
+        </div>
+    {% endfor %}
+
+    <script>
+        // Auto-hide flash messages
+        setTimeout(() => {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                alert.style.opacity = '0';
+                alert.style.transform = 'translateX(100%)';
+                setTimeout(() => alert.remove(), 300);
+            });
+        }, 3000);
+    </script>
+{% endblock %}

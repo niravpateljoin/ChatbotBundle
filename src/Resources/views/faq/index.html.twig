@@ -1,0 +1,78 @@
+{% extends '@Chatbot/base.html.twig' %}
+
+{% block title %}FAQs{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('bundles/chatbot/css/faq.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+    <div class="container index-container">
+    <div class="header index-header">
+        <div class="header-content">
+            <div class="header-left">
+                <h1><i class="fas fa-question-circle"></i> FAQs</h1>
+                <p>Manage frequently asked questions for your chatbot</p>
+                <a href="{{ path('chatbot_faq_new') }}" class="add-btn">
+                    <i class="fas fa-plus"></i>
+                    Add New FAQ
+                </a>
+                <a href="{{ path('chatbot') }}" class="add-btn">Back</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-container">
+        {% if faqs|length > 0 %}
+        <table class="table">
+            <thead>
+            <tr>
+                <th><i class="fas fa-hashtag"></i> ID</th>
+                <th><i class="fas fa-question"></i> Question</th>
+                <th><i class="fas fa-comment-dots"></i> Answer</th>
+                <th><i class="fas fa-tag"></i> Category</th>
+                <th><i class="fas fa-cogs"></i> Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for faq in faqs %}
+                <tr>
+                    <td><span class="faq-id">{{ faq.id }}</span></td>
+                    <td><span class="faq-question">{{ faq.question }}</span></td>
+                    <td><span class="faq-answer">{{ faq.answer|u.truncate(60, '...') }}</span></td>
+                    <td><span class="category-badge">{{ faq.category.name }}</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            <a href="{{ path('chatbot_faq_edit', { id: faq.id }) }}" class="btn btn-edit">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                            <form action="{{ path('chatbot_faq_delete', { id: faq.id }) }}" method="post" style="display:inline-block;">
+                                <input type="hidden" name="token" value="{{ csrf_token('delete-item') }}">
+                                <button class="btn btn-delete" onclick="return confirm('Are you sure you want to delete this FAQ?');">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state">
+            <div class="empty-state">
+                <i class="fas fa-question-circle"></i>
+                <h3>No FAQs Found</h3>
+                <p>Start by creating your first FAQ entry</p>
+                <a href="{{ path('chatbot_faq_new') }}" class="add-btn">
+                    <i class="fas fa-plus"></i>
+                    Add First FAQ
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    </body>
+    </html>
+{% endblock %}

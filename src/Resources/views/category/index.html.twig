@@ -1,0 +1,71 @@
+{% extends '@Chatbot/base.html.twig' %}
+
+{% block title %}Chatbot Categories{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('bundles/chatbot/css/category.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+    <div class="container-wide">
+        <div class="header header-wide">
+            <div class="header-content">
+                <div class="header-left">
+                    <h1><i class="fas fa-robot"></i> Categories</h1>
+                    <p>Manage and organize your chatbot categories with ease</p>
+                    <a href="{{ path('chatbot_category_new') }}" class="add-btn">
+                        <i class="fas fa-plus"></i>
+                        Add New Category
+                    </a>
+                    <a href="{{ path('chatbot') }}" class="add-btn">Back</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-container">
+            {% if categories|length > 0 %}
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th><i class="fas fa-hashtag"></i> ID</th>
+                        <th><i class="fas fa-tag"></i> Category Name</th>
+                        <th><i class="fas fa-cogs"></i> Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for category in categories %}
+                        <tr>
+                            <td><span class="category-id">{{ category.id }}</span></td>
+                            <td><span class="category-name">{{ category.name }}</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <a href="{{ path('chatbot_category_edit', { id: category.id }) }}" class="btn btn-edit">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </a>
+                                    <form action="{{ path('chatbot_category_delete', { id: category.id }) }}" method="post" style="display:inline-block;">
+                                        <input type="hidden" name="token" value="{{ csrf_token('delete-item') }}">
+                                        <button class="btn btn-delete" onclick="return confirm('Are you sure you want to delete this Category?');">
+                                            <i class="fas fa-trash"></i> Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-folder-open"></i>
+                    <h3>No Categories Found</h3>
+                    <p>Start by creating your first chatbot category</p>
+                    <a href="{{ path('chatbot_category_new') }}" class="add-btn">
+                        <i class="fas fa-plus"></i>
+                        Add First Category
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

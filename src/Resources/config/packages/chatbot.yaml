@@ -1,0 +1,4 @@
+# config/packages/chatbot.yaml
+chatbot:
+  role: ROLE_CHATBOT_ADMIN
+  user_question_entity: App\Entity\UserQuestion

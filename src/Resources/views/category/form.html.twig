@@ -1,0 +1,90 @@
+{% extends '@Chatbot/base.html.twig' %}
+
+{% block title %}{{ category.id is not null ? 'Edit Category' : 'Add New Category' }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('bundles/chatbot/css/category.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <!-- Breadcrumb -->
+        <div class="breadcrumb">
+            <a href="{{ path('chatbot_category_index') }}">
+                <i class="fas fa-home"></i> Categories
+            </a>
+            <span>/</span>
+            <span>{{ category.id is not null? 'Edit' : 'Add New ' }}</span>
+        </div>
+
+        <!-- Header -->
+        <div class="header">
+            <h1>
+                <i class="fas fa-{{ category.id is not null ? 'edit' : 'plus' }}"></i>
+                {{ category.id is not null ? 'Edit Category' : 'Add New Category' }}
+            </h1>
+            <p>{{ category.id is not null ? 'Update category information' : 'Create a new chatbot category' }}</p>
+        </div>
+
+        <!-- Success/Error Messages -->
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle"></i>
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-circle"></i>
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        <!-- Form Container -->
+        <div class="form-container">
+            {{ form_start(form) }}
+            <!-- Category Name -->
+            <div class="form-group">
+                <div class="form-floating">
+                    {{ form_widget(form.name, {
+                        'attr': {
+                            'class': 'form-control',
+                            'placeholder': ' ',
+                            'required': 'required'
+                        }
+                    }) }}
+                    {{ form_label(form.name, 'Category Name', {
+                        'label_attr': {'class': 'form-label'}
+                    }) }}
+                    <span class="required">*</span>
+                </div>
+                <div class="form-help">
+                    <i class="fas fa-info-circle"></i>
+                    Enter a descriptive name for your chatbot category
+                </div>
+                {{ form_errors(form.name) }}
+            </div>
+
+            <!-- Form Actions -->
+            <div class="form-actions">
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-save"></i>
+                        {{ category.id is not null ? 'Update Category' : 'Save Category' }}
+                    </button>
+                    <a href="{{ path('chatbot_category_index') }}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i>
+                        Back to List
+                    </a>
+                </div>
+            </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset('bundles/chatbot/js/category.js') }}"></script>
+{% endblock %}

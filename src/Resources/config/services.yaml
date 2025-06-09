@@ -1,0 +1,44 @@
+services:
+  Chatbot\Controller\:
+    arguments:
+      $requiredRole: '%chatbot.role%'
+      $userQuestionEntityClass: '%chatbot.user_question_entity%'
+    resource: '../../Controller'
+    tags: ['controller.service_arguments']
+    autowire: true
+    autoconfigure: true
+
+  Chatbot\Repository\:
+    resource: '../../Repository'
+    autowire: true
+    autoconfigure: true
+
+  Chatbot\Controller\ChatbotCategoryController:
+    arguments:
+      $requiredRole: '%chatbot.role%'
+    tags: [ 'controller.service_arguments' ]
+    public: true
+    autowire: true
+    autoconfigure: true
+
+  Chatbot\Controller\ChatbotFaqController:
+    arguments:
+      $requiredRole: '%chatbot.role%'
+    tags: [ 'controller.service_arguments' ]
+    public: true
+    autowire: true
+    autoconfigure: true
+
+  Chatbot\Repository\UserQuestionRepositoryInterface:
+    tags: [ 'controller.service_arguments' ]
+    public: true
+
+  Chatbot\Controller\ChatController:
+    arguments:
+      $requiredRole: '%chatbot.role%'
+      $userQuestionEntityClass: '%chatbot.user_question_entity%'
+    tags: [ 'controller.service_arguments' ]
+    public: true
+    autowire: true
+    autoconfigure: true
+
