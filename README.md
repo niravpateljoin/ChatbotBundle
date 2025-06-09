@@ -319,7 +319,3 @@ If you need help or have questions, feel free to open an issue on GitHub or cont
 ---
 
 **Happy chatting! 🤖**
-
----
-
-Let me know if you’d like this saved as a `README.md` file or if you need a GitHub-friendly markdown version with proper links.
