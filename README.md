@@ -37,64 +37,7 @@ return [
     Chatbot\ChatbotBundle::class => ['all' => true],
 ];
 ```
-
-### Step 3: Install Assets
-
-```bash
-php bin/console assets:install --symlink
-```
-
-This will publish necessary asset files to the `public/bundles/` directory.
-
-### Step 4: Create and Run Migrations
-
-Generate and execute the database migrations:
-
-```bash
-php bin/console make:migration
-php bin/console doctrine:migrations:migrate
-```
-
-### Step 5: Include the Chatbot Widget
-
-Include the widget in your base template (`templates/base.html.twig`):
-
-```twig
-<body>
-    {{ include('@Chatbot/chatbot_widget.html.twig') }}
-    <!-- Your content -->
-</body>
-```
-
-### Step 6: Add Routes
-
-Add the following to `config/routes.yaml`:
-
-```yaml
-chatbot_bundle:
-  resource: '@ChatbotBundle/Resources/config/routes.yaml'
-```
-
-### Step 7: Add in your services.yaml
-
-```yaml
-Chatbot\Repository\UserQuestionRepositoryInterface: '@App\Repository\UserQuestionRepository'
-```
-
-### Step 8: Add Configuration
-
-Create the file `config/packages/chatbot.yaml`:
-Create the file config/packages/chatbot.yaml and set the user_question_entity parameter to the fully qualified namespace of your user question entity class.
-
-```yaml
-chatbot:
-    role: ROLE_CHATBOT_ADMIN
-    user_question_entity: App\Entity\UserQuestion
-```
-
----
-
-### Step 9: User-Submitted Questions
+### Step 3: User-Submitted Questions
 
 Users can submit their own questions through the chatbot. Admins can respond and choose to publish them in the FAQ. Users receive email notifications when their question is answered.
 
@@ -105,6 +48,7 @@ In your user entity (e.g., `Admin`):
 ```php
 use Chatbot\Security\ChatbotUserInterface;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 class Admin implements ChatbotUserInterface
 {
@@ -153,6 +97,30 @@ class UserQuestion extends BaseQuestion
 }
 ```
 
+###  Create a `UserQuestionRepository` Repository
+
+```php
+declare(strict_types=1);
+
+namespace App\Repository;
+
+use App\Entity\UserQuestion;
+use Chatbot\Repository\UserQuestionRepositoryInterface;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
+
+/**
+ * @extends ServiceEntityRepository<ClientNote>
+ */
+class UserQuestionRepository extends ServiceEntityRepository implements UserQuestionRepositoryInterface
+{
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, UserQuestion::class);
+    }
+}
+````
+
 ###  Configure Email Notifications
 
 Set the `FROM_EMAIL` in your `.env`:
@@ -161,6 +129,59 @@ Set the `FROM_EMAIL` in your `.env`:
 FROM_EMAIL="your@email.com"
 ```
 
+### Step 4: Install Assets
+
+```bash
+php bin/console assets:install --symlink
+```
+
+This will publish necessary asset files to the `public/bundles/` directory.
+
+### Step 5: Create and Run Migrations
+
+Generate and execute the database migrations:
+
+```bash
+php bin/console make:migration
+php bin/console doctrine:migrations:migrate
+```
+
+### Step 6: Include the Chatbot Widget
+
+Include the widget in your base template (`templates/base.html.twig`):
+
+```twig
+<body>
+    {{ include('@Chatbot/chatbot_widget.html.twig') }}
+    <!-- Your content -->
+</body>
+```
+
+### Step 7: Add Routes
+
+Add the following to `config/routes.yaml`:
+
+```yaml
+chatbot_bundle:
+  resource: '@ChatbotBundle/Resources/config/routes.yaml'
+```
+
+### Step 8: Add in your services.yaml
+
+```yaml
+Chatbot\Repository\UserQuestionRepositoryInterface: '@App\Repository\UserQuestionRepository'
+```
+
+### Step 9: Add Configuration
+
+Create the file `config/packages/chatbot.yaml`:
+Create the file config/packages/chatbot.yaml and set the user_question_entity parameter to the fully qualified namespace of your user question entity class.
+
+```yaml
+chatbot:
+    role: ROLE_CHATBOT_ADMIN
+    user_question_entity: App\Entity\UserQuestion
+```
 ---
 
 ## Usage
@@ -297,6 +318,7 @@ As explained above, copy templates from the bundle and place them in:
 * Check `twig.yaml` is correctly set up
 * Verify `config/bundles.php` includes the bundle
 * Clear the Twig cache
+* `composer require twig/string-extra` 
 
 ---
 
@@ -319,7 +341,3 @@ If you need help or have questions, feel free to open an issue on GitHub or cont
 ---
 
 **Happy chatting! 🤖**
-
----
-
-Let me know if you’d like this saved as a `README.md` file or if you need a GitHub-friendly markdown version with proper links.
