@@ -24,6 +24,7 @@ services:
   Chatbot\Controller\ChatbotFaqController:
     arguments:
       $requiredRole: '%chatbot.role%'
+      $userQuestionEntityClass: '%chatbot.user_question_entity%'
     tags: [ 'controller.service_arguments' ]
     public: true
     autowire: true

@@ -12,7 +12,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
-use App\Entity\UserQuestion;
 #[Route('/faq')]
 class ChatbotFaqController extends AbstractController
 {
@@ -20,7 +19,8 @@ class ChatbotFaqController extends AbstractController
         private ChatbotFaqRepository $chatbotFaqRepository,
         private EntityManagerInterface $em,
         private string $requiredRole,
-        private MailerInterface $mailer
+        private string $userQuestionEntityClass,
+        private MailerInterface $mailer,
     ){}
 
     #[Route('/', name: 'chatbot_faq_index')]
@@ -55,7 +55,8 @@ class ChatbotFaqController extends AbstractController
 
             // Remove user question if userQuestionId passed
             if ($userQuestionId) {
-                $userQuestion = $this->em->find(UserQuestion::class, $userQuestionId);
+                $entityClass = $this->userQuestionEntityClass;
+                $userQuestion = $this->em->find($entityClass, $userQuestionId);
                 $user = $userQuestion->getUser();
                 if ($userQuestion) {
                     $this->em->remove($userQuestion);
@@ -63,6 +64,7 @@ class ChatbotFaqController extends AbstractController
 
                     // Send email to the user
                     if ($user && method_exists($user, 'getEmail')) {
+                        $firstName = method_exists($user, 'getFirstname') ? $user->getFirstname() : 'there';
                         $fromEmail = $_ENV['FROM_EMAIL'];
                         $email = (new Email())
                             ->from($fromEmail)
@@ -70,7 +72,7 @@ class ChatbotFaqController extends AbstractController
                             ->subject('We’ve added your question to our FAQ')
                             ->html(sprintf(
                                 '<p>Hi %s,</p><p>We’ve added your question to our FAQ section. Thank you for your contribution!</p>',
-                                htmlspecialchars($user->getFirstname() ?? 'there')
+                                htmlspecialchars($firstName ?? 'there')
                             ));
 
                         $this->mailer->send($email);
