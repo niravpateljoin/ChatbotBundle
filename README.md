@@ -157,7 +157,7 @@ php bin/console make:migration
 php bin/console doctrine:migrations:migrate
 ```
 
-### Step 7: Include the Chatbot Widget
+### Step 7: Include the Chatbot Widget and isUserLoggedIn
 
 Include the widget in your base template (`templates/base.html.twig`):
 
@@ -166,6 +166,13 @@ Include the widget in your base template (`templates/base.html.twig`):
     {{ include('@Chatbot/chatbot_widget.html.twig') }}
     <!-- Your content -->
 </body>
+```
+Add in script tag:
+
+```twig
+<script>
+    const isUserLoggedIn = {{ app.user is not null ? 'true' : 'false' }};
+</script>
 ```
 
 ### Step 8: Add Routes

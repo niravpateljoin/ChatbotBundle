@@ -133,8 +133,12 @@ document.addEventListener('DOMContentLoaded', () => {
             #chatbot-conversation::-webkit-scrollbar-track { background: #f1f5f9; }
             #chatbot-conversation::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
             #chatbot-conversation::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-            
-            .question-input-container {
+
+            .message-animation.chatbot-info {
+                margin-bottom:10px;
+            }
+
+           .question-input-container {
                 background: white;
                 border: 2px solid #e5e7eb;
                 border-radius: 12px;
@@ -458,7 +462,12 @@ document.addEventListener('DOMContentLoaded', () => {
     async function fetchWithErrorHandling(url) {
         try {
             showLoading(true);
-            const response = await fetch(url);
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
 
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -504,16 +513,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 type: 'category'
             }));
 
-            // Add "Ask your question" option
-            categoryButtons.push({
-                text: "❓ Ask your own question",
-                type: 'ask_question'
-            });
+            if (isUserLoggedIn) {
+                categoryButtons.push({
+                    text: "❓ Ask your own question",
+                    type: 'ask_question'
+                });
+            }
 
             addInteractiveButtons(categoryButtons, handleCategorySelection);
 
         } catch (error) {
             showError("Sorry, I couldn't load the categories. Please try again later.");
+        }
+    }
+
+    function showInfoMessage(message) {
+        const chatArea = document.getElementById('chatbot-conversation');
+        if (chatArea) {
+            const infoDiv = document.createElement('div');
+            infoDiv.className = 'message-animation chatbot-info';
+            infoDiv.textContent = message;
+            chatArea.appendChild(infoDiv);
         }
     }
 
@@ -574,9 +594,14 @@ document.addEventListener('DOMContentLoaded', () => {
             // Add helpful actions after answer
             setTimeout(() => {
                 const actionButtons = [
-                    { text: "🔙 Back to categories", type: 'back_to_categories' },
-                    { text: "❓ Ask another question", type: 'ask_question' }
+                    { text: "🔙 Back to categories", type: 'back_to_categories' }
                 ];
+
+                if (isUserLoggedIn) {
+                    actionButtons.push({ text: "❓ Ask your own question", type: 'ask_question' });
+                }else{
+                    showInfoMessage("🔒 Please login to ask your own question");
+                }
 
                 addInteractiveButtons(actionButtons, (action) => {
                     if (action.type === 'back_to_categories') {
@@ -592,9 +617,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function addBackToCategories() {
         const backButtons = [
-            { text: "🔙 Back to categories", type: 'back_to_categories' },
-            { text: "❓ Ask your own question", type: 'ask_question' }
+            { text: "🔙 Back to categories", type: 'back_to_categories' }
         ];
+
+        if (isUserLoggedIn) {
+            backButtons.push({ text: "❓ Ask your own question", type: 'ask_question' });
+        }else{
+            showInfoMessage("🔒 Please login to ask your own question");
+        }
 
         addInteractiveButtons(backButtons, (action) => {
             if (action.type === 'back_to_categories') {

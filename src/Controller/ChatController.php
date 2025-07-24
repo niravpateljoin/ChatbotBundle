@@ -13,6 +13,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use App\Entity\UserQuestion;
 use Chatbot\Security\ChatbotUserInterface;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class ChatController extends AbstractController
 {
@@ -54,9 +55,11 @@ class ChatController extends AbstractController
     }
 
     #[Route('/categories', name: 'chatbot_categories')]
-    public function getCategories(): JsonResponse
+    public function getCategories(Request $request): JsonResponse
     {
-        $this->denyAccessUnlessGranted($this->requiredRole);
+        if (!$request->isXmlHttpRequest()) {
+            throw new AccessDeniedHttpException('Direct access not allowed.');
+        }
 
         $categories = $this->chatbotCategoryRepository->findAll();
 
@@ -69,8 +72,11 @@ class ChatController extends AbstractController
     }
 
     #[Route('/faqs/{category}', name: 'chatbot_faqs_by_category')]
-    public function getFaqsByCategory( ChatbotCategory $category ): JsonResponse {
-        $this->denyAccessUnlessGranted($this->requiredRole);
+    public function getFaqsByCategory( Request $request, ChatbotCategory $category ): JsonResponse {
+
+        if (!$request->isXmlHttpRequest()) {
+            throw new AccessDeniedHttpException('Direct access not allowed.');
+        }
 
         $faqsByCategory = $category->getFaqs()->toArray();
 
