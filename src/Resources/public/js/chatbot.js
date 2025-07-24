@@ -522,6 +522,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             addInteractiveButtons(categoryButtons, handleCategorySelection);
 
+            if (!isUserLoggedIn) {
+                showInfoMessage("🔒 Please login to ask your own question");
+            }
         } catch (error) {
             showError("Sorry, I couldn't load the categories. Please try again later.");
         }
