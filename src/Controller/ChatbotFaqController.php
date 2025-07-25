@@ -66,14 +66,19 @@ class ChatbotFaqController extends AbstractController
                     if ($user && method_exists($user, 'getEmail')) {
                         $firstName = method_exists($user, 'getFirstname') ? $user->getFirstname() : 'there';
                         $fromEmail = $_ENV['FROM_EMAIL'];
+                        $html = $this->renderView('@Chatbot/emails/user_query.html.twig', [
+                            'firstname' => $firstName,
+                            'question' => $faq->getQuestion(),
+                            'answer' => $faq->getAnswer(),
+                            'category' => $faq->getCategory()->getName(),
+                            'appName' => 'Chatbot'
+                        ]);
+
                         $email = (new Email())
                             ->from($fromEmail)
                             ->to($user->getEmail())
                             ->subject('We’ve added your question to our FAQ')
-                            ->html(sprintf(
-                                '<p>Hi %s,</p><p>We’ve added your question to our FAQ section. Thank you for your contribution!</p>',
-                                htmlspecialchars($firstName ?? 'there')
-                            ));
+                            ->html($html);
 
                         $this->mailer->send($email);
                     }

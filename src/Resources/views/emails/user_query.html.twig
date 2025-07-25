@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: sans-serif; color: #333; }
+        .container { padding: 20px; border: 1px solid #ddd; border-radius: 8px; background-color: #f9f9f9; }
+        .header { font-size: 18px; margin-bottom: 15px; }
+        .section-title { font-weight: bold; margin-top: 20px; }
+        .content { margin: 10px 0; padding-left: 10px; border-left: 3px solid #ccc; }
+        .footer { margin-top: 30px; font-size: 13px; color: #888; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <p class="header">Hi {{ firstname }},</p>
+
+    <p>We’ve added your question to our FAQ section. Here's what it looks like:</p>
+
+    <p class="section-title">Category:</p>
+    <p class="content">{{ category }}</p>
+
+    <p class="section-title">Your Question:</p>
+    <p class="content">{{ question }}</p>
+
+    <p class="section-title">Our Answer:</p>
+    <p class="content">{{ answer|raw }}</p>
+
+    <p>Thank you for helping others by contributing to our knowledge base!</p>
+
+    <div class="footer">
+        — The {{ appName }} Team
+    </div>
+</div>
+</body>
+</html>
